@@ -2,7 +2,7 @@
 session_cache_limiter('private_no_expire');
 session_start();
 ini_set('session.cache_limiter', 'private');
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or die ("Could not connect");
+$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or die ("Could not connect");
 $characterSearch=$_POST['searchWriters'];
 $sql="SELECT CharacterID, Characters FROM Characters WHERE CharacterID IN(
 SELECT CharacterID FROM Characters WHERE Characters LIKE \"%$characterSearch%\"
@@ -16,8 +16,8 @@ echo "<html>
 <head><title>COMICS</title></head>
 <body bgcolor=\"#408080\" text=\"#FFFFFF\">
 <h1>Character Results</h1><br>
-<a href='http://ryan-brannan.com/menu.php'>Back to main menu</a> <br>
-<a href=\"http://ryan-brannan.com/logout.php\">Logout</a> <br>
+<a href='menu.php'>Back to main menu</a> <br>
+<a href=\"logout.php\">Logout</a> <br>
 <br>
 <br>
 </body></html>";
@@ -32,13 +32,13 @@ while($row=mysqli_fetch_assoc($result))
 	$idSQL="SELECT Alias FROM CharacterAliases WHERE CharacterID='$CharacterID' ORDER BY Alias";
 	$idResult=mysqli_query($cxn,$idSQL)or die("Could not search alias");
 	echo "<table>" ;
-	echo "<td><a href=http://ryan-brannan.com/viewCharacter.php?id=$CharacterID>$Characters</a></td>";
+	echo "<td><a href=viewCharacter.php?id=$CharacterID>$Characters</a></td>";
 	echo "<tr><td colspan='1'><hr /></td></tr>";
 	while($idRow=mysqli_fetch_assoc($idResult))
 	{
 		extract($idRow);
 		$aka=urlencode($Alias);
-		echo "<td></td><td><a href=http://ryan-brannan.com/viewCharacter.php?id=$CharacterID&alias=$aka>$Alias</a></td></tr>";
+		echo "<td></td><td><a href=viewCharacter.php?id=$CharacterID&alias=$aka>$Alias</a></td></tr>";
 	}
 }
 ?>

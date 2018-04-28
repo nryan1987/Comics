@@ -1,7 +1,7 @@
 <?php
 $ID=$_GET['id'];
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or die ("Could not connect");
+$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or header("Location: index.php?login=false");
 $selectCharacter="SELECT * FROM Characters WHERE CharacterID='$ID'";
 $result=mysqli_query($cxn,$selectCharacter);
 $row=mysqli_fetch_assoc($result);
@@ -40,5 +40,5 @@ while($aliasRow=mysqli_fetch_assoc($aliasResult))
 <br>
 <br>
 <input type='submit' value='Update Character' /><br>
-<a href="http://ryan-brannan.com/menu.php">Back to main menu</a> <br>
+<a href="menu.php">Back to main menu</a> <br>
 </body></html>

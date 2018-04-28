@@ -1,18 +1,13 @@
 <?php
 session_cache_limiter('private_no_expire');
 session_start();
-ini_set('session.cache_limiter', 'private');
+ini_set('session.cachelimiter', 'private');
 if(($_SESSION['uname']=='')||($_SESSION['uname']=='myusername'))
 {
 	$_SESSION['uname']=$_POST['myusername'];
-	$_SESSION['pswrd']=$_POST['mypassword'];
-
-	//$insertLog="INSERT INTO ActivityLog (UserName, Password, Date) VALUES (".$_SESSION['uname'].", ".$_SESSION['pswrd'].", ".date("Y-m-d H:i:s").")";
-	//mysqli_query($cxn,$insertLog)or die("Could not insert into ActivityLog");
-	//echo $insertLog;
+	$_SESSION['pswrd']=$_POST['mypassword'];	
 }
-$cxn=@mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
-//$cxn=@mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or die(mysqli_connect_error());
+$cxn=@mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or header("Location: index.php?login=false");
 ?>
 <html>
 <body bgcolor="#408080" text="#FFFFFF">

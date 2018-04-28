@@ -1,6 +1,6 @@
 <?php
 session_start();
-$cxn=@mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
+$cxn=@mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or header("Location: index.php?login=false");
 $sql="SELECT DISTINCT Title FROM Comics ORDER BY Title";
 $result=mysqli_query($cxn,$sql);
 $comicCount="SELECT COUNT(ComicID) as comicCount FROM Comics";
@@ -44,24 +44,24 @@ $comicCount=$comicCount+1;
 </tr>
 <td>Date:</td>
 <td><select name ='Month'>
-<option value='January'>January</option>
-<option value='February'>February</option>
-<option value='March'>March</option>
-<option value='April'>April</option>
-<option value='May'>May</option>
-<option value='June'>June</option>
-<option value='July'>July</option>
-<option value='August'>August</option>
-<option value='September'>September</option>
-<option value='October'>October</option>
-<option value='November'>November</option>
-<option value='December'>December</option>
-<option value='Spring'>Spring</option>
-<option value='Summer'>Summer</option>
-<option value='Fall'>Fall</option>
-<option value='Winter'>Winter</option>
-<option value='ANNUAL'>ANNUAL</option>
-<option value='Original Graphic Novel'>Original Graphic Novel</option>
+<option value='-01-01'>January</option>
+<option value='-02-01'>February</option>
+<option value='-03-01'>March</option>
+<option value='-04-01'>April</option>
+<option value='-05-01'>May</option>
+<option value='-06-01'>June</option>
+<option value='-07-01'>July</option>
+<option value='-08-01'>August</option>
+<option value='-09-01'>September</option>
+<option value='-10-01'>October</option>
+<option value='-11-01'>November</option>
+<option value='-12-01'>December</option>
+<option value='-03-20'>Spring</option>
+<option value='-06-21'>Summer</option>
+<option value='-09-22'>Fall</option>
+<option value='-12-23'>Winter</option>
+<option value='-12-30'>Annual</option>
+<option value='-01-31'>Original Graphic Novel</option>
 </select>
 <input type="number" size='5' name="year" value=<?php echo date("Y"); ?> /></td>
 </tr>
@@ -105,8 +105,8 @@ $comicCount=$comicCount+1;
 <td><input type="text" size='30' name="notes" /></td>
 </table> 
 <input type='submit' value='Add comic' /><br><br>
-<a href="http://ryan-brannan.com/menu.php">Back to main menu</a> <br>
+<a href="menu.php">Back to main menu</a> <br>
 <a href="" onclick="window.open('uploadFile.php','', 'width=400, height=250, location=yes, menubar=yes, status=yes, toolbar=yes, scrollbars=no, resizable=no'); return false">
    Add comics from an excel spreadsheet</a> <br><br>
-<a href="http://ryan-brannan.com/logout.php">Logout</a> <br>
+<a href="logout.php">Logout</a> <br>
 </form></body></html>

@@ -2,7 +2,7 @@
 session_cache_limiter('private_no_expire');
 session_start();
 ini_set('session.cache_limiter', 'private');
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or die ("Could not connect");
+$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or header("Location: index.php?login=false");
 $creatorSearch=$_POST['searchCreator'];
 //$sql="SELECT * FROM Artists WHERE Artist LIKE '%$artistSearch%' ORDER BY Artist";
 $sql="SELECT CreatorID, Creator FROM Creators WHERE Creator LIKE '%$creatorSearch%' UNION SELECT CreatorID, Alias FROM CreatorAlias WHERE Alias LIKE '%$creatorSearch%' ORDER BY 2";

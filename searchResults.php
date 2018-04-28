@@ -3,14 +3,7 @@ include 'utilities.php';
 session_cache_limiter('private_no_expire');
 session_start();
 ini_set('session.cache_limiter', 'private');
-@$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
-
-/********************************************
-WARNING!!!! The contents of this file are 
-slightly different than the local copy.
-See the call to ob_start() below.
-********************************************/
-
+@$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or header("Location: index.php?login=false");
 $CID=$_POST['comicID'];
 $title=$_POST["Title"];
 $titleKeyword=$_POST["altTitle"];
@@ -36,24 +29,26 @@ $title=str_replace("%","'",$title);
 
 $cookie_name=$_SESSION['uname']."_search";
 
-ob_start();
-echo "<html>
-<head><title>COMICS</title></head>
+//echo "<html>
+//<head><title>COMICS</title></head>
 
-<body bgcolor=\"#408080\" text=\"#FFFFFF\">
-<form action='update.php' method='POST'>
-<h1>Search Results</h1><br>
-<a href='menu.php'>Back to main menu</a> <br>
-<a href='search.php'>Back to search</a> <br>";
+//<body bgcolor=\"#408080\" text=\"#FFFFFF\">
+//<form action='update.php' method='POST'>
+//<h1>Search Results</h1><br>
+//<a href='menu.php'>Back to main menu</a> <br>
+//<a href='search.php'>Back to search</a> <br>";
 if(($new!=0)||(!(empty($new))))
 {
-	$sql="SELECT * FROM Comics WHERE `ComicID` BETWEEN ".$old." AND ".$new;
-	$totalPaidResult=mysqli_query($cxn,"SELECT Sum(Comics.PricePaid) AS SumOfPricePaid, Avg(Comics.PricePaid) AS AveragePricePaid,
-	Min(Comics.PricePaid) AS MinPricePaid, Max(Comics.PricePaid) AS MaxPricePaid FROM Comics WHERE `ComicID` BETWEEN ".$old." AND ".$new);
-	$totalPaidRow=mysqli_fetch_assoc($totalPaidResult);
-	extract($totalPaidRow);
-	$result=mysqli_query($cxn,$sql)or die("Could not execute Search: $sql");
+//	$sql="SELECT * FROM Comics WHERE `ComicID` BETWEEN ".$old." AND ".$new;
+	$whereClause = " `ComicID` BETWEEN ".$old." AND ".$new;
+	//$totalPaidResult=mysqli_query($cxn,"SELECT Sum(Comics.PricePaid) AS SumOfPricePaid, Avg(Comics.PricePaid) AS AveragePricePaid,
+	//Min(Comics.PricePaid) AS MinPricePaid, Max(Comics.PricePaid) AS MaxPricePaid FROM Comics WHERE `ComicID` BETWEEN ".$old." AND ".$new);
+	//$totalPaidRow=mysqli_fetch_assoc($totalPaidResult);
+	//extract($totalPaidRow);
+	$sql=$sql.$whereClause;
+	$result=mysqli_query($cxn,$sql)or die("Could not execute Search: $sql".mysqli_error($cxn));
 	$numIssues=mysqli_num_rows($result);
+	//echoPage("Search Results");
 }
 //else if($numSearches==0 &&(($new==0)||(!(empty($new)))))
 else if($nq == 1)
@@ -92,21 +87,33 @@ else if($nq == 1)
 		$whereClause=$whereClause." `Volume`=\"$issueVol\"";
 		$count++;
 	}
-	if(!(empty($month)))
+	
+	//publicationDate
+	if(!((empty($month)) && (empty($year))))
 	{
 		if($count>0)
 			$whereClause=$whereClause." AND ";
-		$whereClause=$whereClause." `Month`=\"$month\"";
+		$whereClause=$whereClause." `publicationDate` $yearOp '$year$month'";
+		$count++;
+	}	
+	else if(!(empty($month)))
+	{
+		$mnth=getMonthNum($month);
+		if($count>0)
+			$whereClause=$whereClause." AND ";
+		//$whereClause=$whereClause." `Month`=\"$month\"";
+		$whereClause=$whereClause." MONTH(`publicationDate`) $yearOp $mnth";
 		$count++;
 	}
-	if(!(empty($year)))
+	else if(!(empty($year)))
 	{
 		if($count>0)
 			$whereClause=$whereClause." AND ";
 		//$whereClause=$whereClause." `Year` LIKE \"%$year%\"";
-		$whereClause=$whereClause." `Year` $yearOp $year";
+		$whereClause=$whereClause." YEAR(`publicationDate`) $yearOp $year";
 		$count++;
 	}
+	
 	if(!(empty($notes)))
 	{
 		if($count>0)
@@ -118,7 +125,7 @@ else if($nq == 1)
 	{
 		if($count>0)
 			$whereClause=$whereClause." AND ";
-		$whereClause=$whereClause." (SELECT GROUP_CONCAT(Notes SEPARATOR '; ') FROM Notes WHERE Notes.ComicID=Comics.ComicID ORDER BY Notes.Notes) LIKE \"%$notes%\"";
+		$whereClause=$whereClause." `StoryTitle` LIKE \"%$story%\"";
 		$count++;
 	}
 	if(!(empty($publisher)))
@@ -151,7 +158,12 @@ else if($nq == 1)
 		$whereClause=$whereClause." `Condition`=\"$grade\"";
 		$count++;
 	}
-		
+
+	if($count == 0)
+	{
+		$whereClause=" 1";
+	}
+	
 	$sql=$sql.$whereClause." ORDER BY Title, Volume, Issue, Notes";
 	//$insertQuery="INSERT INTO Comics.searchQuery (`query`, `whereClause`) VALUES ('$sql', '$whereClause')";
 	
@@ -159,16 +171,19 @@ else if($nq == 1)
 	$result=mysqli_query($cxn,$sql)or die("Could not execute Search: $sql");
 	$resNum=mysqli_num_rows($result);
 	
-	$totalPaidResult=mysqli_query($cxn,"SELECT Sum(Comics.PricePaid) AS SumOfPricePaid, Avg(Comics.PricePaid) AS AveragePricePaid,
-	Min(Comics.PricePaid) AS MinPricePaid, Max(Comics.PricePaid) AS MaxPricePaid FROM Comics WHERE ".$whereClause);
-	$totalPaidRow=mysqli_fetch_assoc($totalPaidResult);
-	extract($totalPaidRow);
+//	$totalPaidResult=mysqli_query($cxn,"SELECT Sum(Comics.PricePaid) AS SumOfPricePaid, Avg(Comics.PricePaid) AS AveragePricePaid,
+//	Min(Comics.PricePaid) AS MinPricePaid, Max(Comics.PricePaid) AS MaxPricePaid FROM Comics WHERE ".$whereClause);
+//	$totalPaidRow=mysqli_fetch_assoc($totalPaidResult);
+//	extract($totalPaidRow);
+	
+	$success = setcookie($cookie_name, $whereClause, time() + (86400 * 30), "/"); // 86400 = 1 day
 
-	displayPages($resNum);
+	//echoPage("Search Results");
+	//displayPages($resNum);
 
 	$result=mysqli_query($cxn,$sql)or die("Could not execute Search: $sql");
 	$numIssues=mysqli_num_rows($result);
-	setcookie($cookie_name, $whereClause, time() + (86400 * 30), "/"); // 86400 = 1 day
+	
 	
 	$sql=$sql." LIMIT 0 , 150";
 	
@@ -182,17 +197,28 @@ else if(!(empty($queryLimit)))
 	$lowerLimit=$queryLimit-150;
 	$result=mysqli_query($cxn,$sql)or die("Could not execute Search: $sql. ".mysqli_error($cxn));
 	$numIssues=mysqli_num_rows($result);
-	displayPages($numIssues);
+	//echoPage("Search Results");
+	//displayPages($numIssues);
 
-	$totalPaidResult=mysqli_query($cxn,"SELECT Sum(Comics.PricePaid) AS SumOfPricePaid, Avg(Comics.PricePaid) AS AveragePricePaid,
-	Min(Comics.PricePaid) AS MinPricePaid, Max(Comics.PricePaid) AS MaxPricePaid FROM Comics WHERE ".$whereClause);
-	$totalPaidRow=mysqli_fetch_assoc($totalPaidResult);
-	extract($totalPaidRow);
+//	$totalPaidResult=mysqli_query($cxn,"SELECT Sum(Comics.PricePaid) AS SumOfPricePaid, Avg(Comics.PricePaid) AS AveragePricePaid,
+//	Min(Comics.PricePaid) AS MinPricePaid, Max(Comics.PricePaid) AS MaxPricePaid FROM Comics WHERE ".$whereClause);
+//	$totalPaidRow=mysqli_fetch_assoc($totalPaidResult);
+//	extract($totalPaidRow);
 
 	$sql=$sql." LIMIT $lowerLimit , 150";
 	$result=mysqli_query($cxn,$sql)or die("Could not execute Search: $sql. ".mysqli_error($cxn));
 }
 
+//echo $sql;
+
+echo "<html>
+<head><title>COMICS</title></head>
+
+<body bgcolor=\"#408080\" text=\"#FFFFFF\">
+<form action='update.php' method='POST'>
+<h1>Search Results</h1><br>
+<a href='menu.php'>Back to main menu</a> <br>
+<a href='search.php'>Back to search</a> <br>";
 if($numIssues==1)
 {
 	echo "<br>Your search matches $numIssues issue.<br>";
@@ -201,10 +227,18 @@ else
 {
 	echo "<br>Your search matches $numIssues issues.<br>";
 }
+
+$totalPaidResult=mysqli_query($cxn,"SELECT Sum(Comics.PricePaid) AS SumOfPricePaid, Avg(Comics.PricePaid) AS AveragePricePaid,
+	Min(Comics.PricePaid) AS MinPricePaid, Max(Comics.PricePaid) AS MaxPricePaid FROM Comics WHERE ".$whereClause);
+	$totalPaidRow=mysqli_fetch_assoc($totalPaidResult);
+extract($totalPaidRow);
 echo "Totals for your search. Total: $$SumOfPricePaid\tAverage: $$AveragePricePaid\tMinimum: $$MinPricePaid\tMaximum: $$MaxPricePaid<br>";
+displayPages($numIssues);
+echo "<br>";
 displayComics($cxn,$result);
 
-echo "<a href='menu.php'>Back to main menu</a> <br>";
+displayPages($numIssues);
+echo "<br><a href='menu.php'>Back to main menu</a> <br>";
 
 function displayPages($resNum)
 {

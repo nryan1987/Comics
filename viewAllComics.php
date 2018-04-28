@@ -1,6 +1,7 @@
 <?php
+include 'utilities.php';
 session_start();
-$cxn=@mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
+$cxn=@mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or header("Location: index.php?login=false");
 $page=$_GET['page'];
 if(empty($page))
 	$sql="SELECT *, (SELECT GROUP_CONCAT(Notes SEPARATOR '; ') FROM Notes WHERE Notes.ComicID=Comics.ComicID ORDER BY Notes.Notes) AS Notes FROM `Comics` ORDER BY Title, Volume, Issue, Notes LIMIT 0, 500";
@@ -33,8 +34,7 @@ echo "<table Border='1' style=\"color:white\">";
 echo "<td>Title</td>";
 echo "<td>Volume</td>";
 echo "<td>Issue</td>";
-echo "<td>Month</td>";
-echo "<td>Year</td>";
+echo "<td>Publication Date</td>";
 echo "<td>Notes</td>";
 echo "<td>Story Title</td>";
 echo "<td>Publisher</td>";
@@ -56,12 +56,16 @@ for($i = 0; $i < $numPages; $i++)
 while($row=mysqli_fetch_assoc($result))
 {
 	extract($row);
+	//echo $publicationDate;
+	$mnth = getMonth($publicationDate);
+	$yr = getYear($publicationDate);
+	
+	//echo $mnth.", ".$yr;
 	echo "<tr>\n
 		<td><a href='viewPicture.php?id=$ComicID'>$Title</td>
 		<td>$Volume</td>
 		<td>$Issue</td>
-		<td>$Month</td>
-		<td>$Year</td>
+		<td>$mnth, $yr</td>
 		<td>$Notes</td>
 		<td>$StoryTitle</td>
 		<td>$Publisher</td>

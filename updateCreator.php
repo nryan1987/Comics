@@ -1,6 +1,6 @@
 <?php
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
+$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or header("Location: index.php?login=false");
 $ID=$_GET['artistID'];
 $name=$_GET['Artist'];
 $aka=$_GET['creditedAs'];

@@ -1,7 +1,7 @@
 <?php
 include 'utilities.php';
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
+$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or header("Location: index.php?login=false");
 $CID=$_GET['id'];
 $selectComic="SELECT * FROM Comics WHERE ComicID='$CID'";
 $result=mysqli_query($cxn,$selectComic);
@@ -24,6 +24,9 @@ $allAlias="SELECT Characters.CharacterID, Characters.Characters, CharacterAliase
 FROM Characters INNER JOIN CharacterAliases ON Characters.CharacterID= CharacterAliases.CharacterID ";
 $allAliasResult=mysqli_query($cxn,$allAlias);
 extract($row);
+
+$mnthNum=getMonthNum(getMonth($publicationDate));
+$mnth=getMonth($publicationDate);
 ?>
 <html>
 <head><title><?php echo $Title." Volume ".$Volume." "." #".$Issue ?></title></head>
@@ -49,27 +52,27 @@ extract($row);
 <td>Date:</td>
 <td><select name ='month'>
 <?php
-echo "<option value='$Month'>$Month</option>";
-echo "<option value='January'>January</option>";
-echo "<option value='February'>February</option>";
-echo "<option value='March'>March</option>";
-echo "<option value='April'>April</option>";
-echo "<option value='May'>May</option>";
-echo "<option value='June'>June</option>";
-echo "<option value='July'>July</option>";
-echo "<option value='August'>August</option>";
-echo "<option value='September'>September</option>";
-echo "<option value='October'>October</option>";
-echo "<option value='November'>November</option>";
-echo "<option value='December'>December</option>";
-echo "<option value='Spring'>Spring</option>";
-echo "<option value='Summer'>Summer</option>";
-echo "<option value='Fall'>Fall</option>";
-echo "<option value='Winter'>Winter</option>";
-echo "<option value='Annual'>Annual</option>";
-echo "<option value='Original Graphic Novel'>Original Graphic Novel</option>";
+echo "<option value='$mnthNum'>$mnth</option>";
+echo "<option value='-01-01'>January</option>";
+echo "<option value='-02-01'>February</option>";
+echo "<option value='-03-01'>March</option>";
+echo "<option value='-04-01'>April</option>";
+echo "<option value='-05-01'>May</option>";
+echo "<option value='-06-01'>June</option>";
+echo "<option value='-07-01'>July</option>";
+echo "<option value='-08-01'>August</option>";
+echo "<option value='-09-01'>September</option>";
+echo "<option value='-10-01'>October</option>";
+echo "<option value='-11-01'>November</option>";
+echo "<option value='-12-01'>December</option>";
+echo "<option value='-03-20'>Spring</option>";
+echo "<option value='-06-21'>Summer</option>";
+echo "<option value='-09-22'>Fall</option>";
+echo "<option value='-12-23'>Winter</option>";
+echo "<option value='-12-30'>Annual</option>";
+echo "<option value='-01-31'>Original Graphic Novel</option>";
 ?>
-</select><input type="text" size="5" name="year" value="<?php echo "$Year"; ?>" /></td>
+</select><input type="text" size="5" name="year" value="<?php echo getYear($publicationDate); ?>" /></td>
 </tr>
 <td>Story Title:</td>
 <td><input type="text" size="40" name="storyTitle" value="<?php echo "$StoryTitle"; ?>" /></td>
@@ -79,12 +82,12 @@ echo "<option value='Original Graphic Novel'>Original Graphic Novel</option>";
 <?php
 	$sql="SELECT DISTINCT `Publisher` FROM `Publisher` ORDER BY `Publisher`";
 	$result=mysqli_query($cxn,$sql);
+echo "<option value=\"$Publisher\">$Publisher</option>\n";
+while($row=mysqli_fetch_assoc($result))
+{
+	extract($row);
 	echo "<option value=\"$Publisher\">$Publisher</option>\n";
-	while($row=mysqli_fetch_assoc($result))
-	{
-		extract($row);
-		echo "<option value=\"$Publisher\">$Publisher</option>\n";
-	}
+}
 ?>
 </select></td>
 </tr>
@@ -102,9 +105,9 @@ echo "<option value='Original Graphic Novel'>Original Graphic Novel</option>";
 	echo "<option value='$Condition'>$Condition</option>\n";
 	while($row=mysqli_fetch_assoc($result))
 	{
-		extract($row);
-		echo "<option value='$Condition'>$Condition</option>\n";
-	}
+	extract($row);
+	echo "<option value='$Condition'>$Condition</option>\n";
+}
 ?>
 </select></td>
 </tr>
@@ -113,7 +116,6 @@ echo "<option value='Original Graphic Novel'>Original Graphic Novel</option>";
 </tr>
 <?php
 	$notesSQL="SELECT * FROM Notes WHERE ComicID=$CID";
-		
 	$notesResults=mysqli_query($cxn,$notesSQL)or die("Could not execute Notes Search. ".mysqli_error($cxn));
 	$count = 1;
 	while($notesRow=mysqli_fetch_assoc($notesResults))
@@ -222,7 +224,7 @@ Character(s):<br>
 	while($allAliasRow=mysqli_fetch_assoc($allAliasResult))
 	{
 		extract($allAliasRow);
-		echo "<option value='$Alias'>$Alias ($Characters)</option>\n";
+		echo "<option value=\"$Alias\">$Alias ($Characters)</option>\n";
 	}
 ?>
 </select>
@@ -239,33 +241,33 @@ Or enter a new character:
 		) ON Characters.CharacterID= ComicCharacters.CharacterID WHERE ComicCharacters.ComicID='$ComicID' ORDER BY Characters.Characters";
 		
 		$characterResult=mysqli_query($cxn,$characterSQL)or die("Could not execute Character Search");
-		echo "<table style='display: inline'>" ;
-		echo "<tr><td colspan='1'><hr /></td></tr><br>";
+		echo "<table style='display: inline'>\n" ;
+		echo "<tr><td colspan='1'><hr /></td></tr><br>\n";
 		while($characterRow=mysqli_fetch_assoc($characterResult))
 		{
 			extract($characterRow);
-			echo "<td>$Characters</td>";
+			echo "<td>$Characters</td>\n";
 			$aliasSQL="SELECT Alias, CharacterAliases.CharacterID FROM CharacterAliases INNER JOIN Characters ON Characters.CharacterID=CharacterAliases.CharacterID WHERE Characters = \"$Characters\" ORDER BY Alias";
 			$editAliasResult=mysqli_query($cxn,$aliasSQL)or die("Could not execute edit Alias Search");
 			$numAliases=mysqli_num_rows($editAliasResult);
 			if($numAliases!=0)
 			{
-				echo "<td><select name ='editAlias[]'>";
-				echo "<option value='$AppearsAs $CharacterID'>$AppearsAs</option>";
-				echo "<option value=' $CharacterID'></option>";
+				echo "<td><select name ='editAlias[]'>\n";
+				echo "<option value=\"$AppearsAs $CharacterID\">$AppearsAs</option>\n";
+				echo "<option value=\" $CharacterID\"></option>\n";
 				while($editAliasRow=mysqli_fetch_assoc($editAliasResult))
 				{
 					extract($editAliasRow);
-					echo "<option value='$Alias $CharacterID'>$Alias</option>";
+					echo "<option value=\"$Alias $CharacterID\">$Alias</option>\n";
 				}
-				echo "</td>";
+				echo "</td>\n";
 			}
 			else
 			{
-				echo "<td></td>";
+				echo "<td></td>\n";
 			}
-			echo "<td>$AppearsAs</td>";
-			echo "<td><input type='checkbox' name='characterFields[]' value='$CharacterID' /> Delete $Characters</td></tr>";
+			echo "<td>$AppearsAs</td>\n";
+			echo "<td><input type='checkbox' name='characterFields[]' value='$CharacterID' /> Delete $Characters</td></tr>\n";
 		}
 		echo "</table>\n";
 ?>

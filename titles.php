@@ -1,6 +1,6 @@
 <?php
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
+$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or header("Location: index.php?login=false");
 $sql="SELECT Comics.Title, Count(Comics.Title) AS CountOfTitle FROM Comics GROUP BY Comics.Title, Comics.Title ORDER BY Count(Comics.Title) DESC , Comics.Title";
 $result=mysqli_query($cxn,$sql);
 
@@ -13,8 +13,8 @@ echo "<html>
 	  <head><title>Popular Titles</title></head>
 	  <body bgcolor=\"#408080\" text=\"#FFFFFF\">";
 echo "<h1>Most Popular Titles</h1><br>";
-echo "<a href='http://ryan-brannan.com/menu.php'>Back to main menu</a> <br>";
-echo "<a href='http://ryan-brannan.com/logout.php'>Logout</a> <br>";
+echo "<a href='menu.php'>Back to main menu</a> <br>";
+echo "<a href='logout.php'>Logout</a> <br>";
 echo "<table style=\"color:white\">";
 echo "<td>Title</td>";
 echo "<td>Number of Issues</td>";

@@ -1,7 +1,7 @@
 <?php
 include 'utilities.php';
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or die ("Could not connect");
+$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or die ("Could not connect");
 $CID=$_POST['comicID'];
 $issueNum=$_POST['issue'];
 $issueVol=$_POST['volume'];
@@ -45,7 +45,7 @@ $url=getURL($title, $issueVol, $issueNum, $notes);
 
 $fullURL = substr($url, 3);
 $fullURL = $_SERVER['DOCUMENT_ROOT']."/".$fullURL; //gives full path.
-//echo $fullURL;
+
 $urlExists = file_exists($fullURL);
 
 if(!$urlExists)
@@ -56,8 +56,14 @@ if(!$urlExists)
 //else
 	//echo "URL Does exist.";
 
-$insertComic="INSERT INTO Comics (`ComicID`, `Title`, `Volume`, `Issue`, `Month`, `Year`, `StoryTitle`, `Publisher`, `PricePaid`, `Value`, `Condition`, `Picture`) 
-VALUES ('$CID', \"$title\", '$issueVol', '$issueNum', '$month', '$year', \"$story\", \"$publisher\", '$paid', '$value', '$grade', '$url')";
+//$dt=convertToDate($month, $year);
+//$pubDate=$dt->format('Y-m-d');
+
+$mnth=getMonth($year.$month);
+
+$insertComic="INSERT INTO Comics (`ComicID`, `Title`, `Volume`, `Issue`, `publicationDate`, `StoryTitle`, `Publisher`, `PricePaid`, `Value`, `Condition`, `Picture`) 
+VALUES ('$CID', \"$title\", '$issueVol', '$issueNum', '$year$month', \"$story\", \"$publisher\", '$paid', '$value', '$grade', '$url')";
+
 mysqli_query($cxn,$insertComic)or die("Could not insert into Comics. $insertComic");
 
 if($notes != Null)
@@ -88,7 +94,7 @@ if($notes != Null)
 <td><?php echo "$issueVol" ?></td>
 </tr>
 <td>Date:</td>
-<td><?php echo "$month, $year" ?></td>
+<td><?php echo "$mnth, $year" ?></td>
 </tr>
 <td>Story Title:</td>
 <td><?php echo "$story" ?></td>
@@ -113,5 +119,4 @@ if($notes != Null)
 </table> 
 <?php echo '<img STYLE="position:absolute; TOP:7px; LEFT:750px;" src="'.$url.'" ALT="Picture unavailable">' ?>
 <a href=update.php?id=<?php echo "$CID" ?>>Update <?php echo "$CID" ?> </a><br>
-<a href="menu.php">Back to main menu</a> <br>
-</body></html>
+<a href="menu.php">Back to main menu</a> <br></body></html>
