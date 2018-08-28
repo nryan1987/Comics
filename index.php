@@ -2,7 +2,7 @@
 <tr>
 <body bgcolor="#000000" text="#FFFFFF">
 <head><title>COMICS</title></head>
-<center><img src="../images/heroes.gif" ALT="HELLO"/></center>
+<center><img src="images/heroes.gif" ALT="HELLO"/></center>
 
 <br />
 <?php
