@@ -1,7 +1,7 @@
 <?php
 include 'utilities.php';
 session_start();
-$cxn=@mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
+$cxn=@mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 $charSearch=$_GET['id'];
 $aliasSearch=$_GET['alias'];
 $page=$_GET['page'];
@@ -15,8 +15,8 @@ echo "<html>
 </body></html>";
 if(empty($aliasSearch))
 {
-	$sql="SELECT Characters.CharacterID, Characters.Characters, Characters.CharacterPic, Comics.ComicID, Comics.Title, Comics.Issue, Comics.Volume, Comics.Month, Comics.Year,
-	Comics.PricePaid, Comics.Value, Comics.StoryTitle, Comics.Publisher, Comics.Condition, Comics.Picture
+	$sql="SELECT Characters.CharacterID, Characters.Characters, Characters.CharacterPic, Comics.ComicID, Comics.Title, Comics.Issue, Comics.Volume,
+	Comics.publicationDate, Comics.PricePaid, Comics.Value, Comics.StoryTitle, Comics.Publisher, Comics.Condition, Comics.Picture
 	FROM Comics INNER JOIN (Characters INNER JOIN ComicCharacters ON Characters.CharacterID = ComicCharacters.CharacterID) ON Comics.ComicID = ComicCharacters.ComicID
 	WHERE (((Characters.CharacterID)='$charSearch')) ORDER BY Comics.Title,Comics.Volume, Comics.Issue";
 	echo "<html><head><title>$Characters</title></head></html>";
@@ -25,7 +25,7 @@ if(empty($aliasSearch))
 else
 {
 	$sql="SELECT Characters.CharacterID, Characters.Characters, ComicCharacters.AppearsAs, Characters.CharacterPic, Comics.ComicID, Comics.Title, Comics.Issue, Comics.Volume, 
-	Comics.Month, Comics.Year, Comics.PricePaid, Comics.Value, Comics.StoryTitle, Comics.Publisher, Comics.Condition, Comics.Picture 
+	Comics.publicationDate, Comics.PricePaid, Comics.Value, Comics.StoryTitle, Comics.Publisher, Comics.Condition, Comics.Picture 
 	FROM Comics INNER JOIN (Characters INNER JOIN ComicCharacters ON Characters.CharacterID = ComicCharacters.CharacterID) ON Comics.ComicID = ComicCharacters.ComicID
 	WHERE (((Characters.CharacterID)='$charSearch')AND(ComicCharacters.AppearsAs='$aliasSearch')) ORDER BY Comics.Title,Comics.Volume, Comics.Issue";
 	echo "<html><head><title>$aliasSearch ($Characters)</title></head></html>";

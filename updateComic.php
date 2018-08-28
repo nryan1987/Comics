@@ -1,6 +1,7 @@
 <?php
+include 'utilities.php';
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or die ("Could not connect");
+$cxn=mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or die ("Could not connect");
 $CID=$_GET['comicID'];
 $Title=$_GET['title'];
 $Issue=$_GET['issue'];
@@ -65,6 +66,7 @@ for ($l=0;$l<count($editAliases);$l++)
 	}
 	$aka=str_replace(" $prev","",$editAliases[$l]);
 	$updateAliasSQL="UPDATE ComicCharacters SET AppearsAs=\"$aka\" WHERE ComicCharacters.ComicID='$CID' AND CharacterID='$prev'";
+	
 	mysqli_query($cxn,$updateAliasSQL)or die("Could not update alias");
 }
 
@@ -113,7 +115,7 @@ if(!(empty($altCharacter)))
 
 if(!(empty($characterID)))
 {
-	$addCharacterSQL="INSERT INTO ComicCharacters (ComicID, CharacterID, AppearsAs) VALUES ('$CID', '$characterID', '$alias')";
+	$addCharacterSQL="INSERT INTO ComicCharacters (ComicID, CharacterID, AppearsAs) VALUES (\"$CID\", \"$characterID\", \"$alias\")";
 	mysqli_query($cxn,$addCharacterSQL)or die("Could not insert into ComicCharacters $addCharacterSQL");
 }
 
@@ -125,8 +127,8 @@ if(empty($oldPic) && !file_exists($updatePicture))
 	$Picture='';
 }
 
-$updateSQL="UPDATE Comics SET Comics.Title=\"$Title\", Comics.Issue='$Issue', Comics.Volume='$Volume', Comics.Month='$Month', 
-Comics.Year='$Year', Comics.StoryTitle=\"$StoryTitle\", Comics.Publisher=\"$Publisher\", Comics.PricePaid='$Paid', Comics.Value='$Value', 
+$updateSQL="UPDATE Comics SET Comics.Title=\"$Title\", Comics.Issue='$Issue', Comics.Volume='$Volume', 
+Comics.publicationDate='".$Year.$Month."', Comics.StoryTitle=\"$StoryTitle\", Comics.Publisher=\"$Publisher\", Comics.PricePaid='$Paid', Comics.Value='$Value', 
 Comics.Condition='$Condition', Comics.Picture='$Picture' WHERE ComicID='$CID'";
 
 if((strcmp($oldPic, $Picture) != 0) && !empty($oldPic) && !empty($Picture))
@@ -154,12 +156,15 @@ if($ArtistID>0)
 	$addArtistSQL="INSERT INTO ComicArtists (ComicID,ArtistID) VALUES ('$CID','$ArtistID')";
 	mysqli_query($cxn,$addArtistSQL)or die("Could not update artists");
 }
+
 mysqli_query($cxn,$updateSQL)or die("Could not update<br>SQL ERROR: ".mysqli_error($cxn)."<br>".$updateSQL."\n".mysqli_error());
+logEvent($cxn, "Update issue. ID=$CID, title=$Title, issueNum=$Issue, issueVol=$Volume.");
 
 if($Notes != Null)
 {
 	$insertNotesSQL = "INSERT INTO Notes (ComicID, Notes) VALUES ($CID, \"$Notes\")";
 	mysqli_query($cxn,$insertNotesSQL)or die("Could not insert into notes<br>SQL ERROR: ".mysqli_error($cxn)."<br>".$insertNotesSQL."\n".mysqli_error());
+	logEvent($cxn, "Create note. ID=$CID, title=$Title, issueNum=$Issue, issueVol=$Volume note=$Notes.");
 }
 
 

@@ -1,6 +1,6 @@
 <?php
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or die ("Could not connect");
+$cxn=mysqli_connect("localhost",$_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or die ("Could not connect");
 include 'utilities.php';
 
 echo "Upload: " . $_FILES["file"]["name"] . "<br />";
@@ -18,8 +18,10 @@ $comicCount=$comicCount+1;
 $totalAdded=0;
 $notesPresent=0;
 
-$sql="INSERT INTO Comics (`ComicID`, `Title`, `Volume`, `Issue`, `Month`, `Year`, `StoryTitle`, `Publisher`, `PricePaid`, `Value`, `Condition`, `Picture`) VALUES ";
+//$sql="INSERT INTO Comics (`ComicID`, `Title`, `Volume`, `Issue`, `Month`, `Year`, `StoryTitle`, `Publisher`, `PricePaid`, `Value`, `Condition`, `Picture`) VALUES ";
+$sql="INSERT INTO Comics (`ComicID`, `Title`, `Volume`, `Issue`, `publicationDate`, `StoryTitle`, `Publisher`, `PricePaid`, `Value`, `Condition`, `Picture`) VALUES ";
 $insertNotesSQL = "INSERT INTO Notes (ComicID, Notes) VALUES ";
+$logString = "Enter list. ";
 	
 while(!feof($file))
 {
@@ -73,12 +75,12 @@ while(!feof($file))
 		if($fileExists)
 		{
 			//echo "File Exists";
-			$values="(".$comicCount.",\"".$title."\", ".$vol.", ".$num.", \"January\", ".date("Y").", '', \"".$pub."\", ".$paid.", 0.00, \"MT 10.0\", \"".$url."\"), ";
+			$values="(".$comicCount.",\"".$title."\", ".$vol.", ".$num.", '".date("Y-m-1")."', '', \"".$pub."\", ".$paid.", 0.00, \"MT 10.0\", \"".$url."\"), ";
 		}
 		else
 		{
 			//echo "File does not exist";
-			$values="(".$comicCount.",\"".$title."\", ".$vol.", ".$num.", \"January\", ".date("Y").", '', \"".$pub."\", ".$paid.", 0.00, \"MT 10.0\", \"\"), ";
+			$values="(".$comicCount.",\"".$title."\", ".$vol.", ".$num.", '".date("Y-m-1")."', '', \"".$pub."\", ".$paid.", 0.00, \"MT 10.0\", \"\"), ";
 		}
 		
 		if(!empty($notes))
@@ -87,6 +89,8 @@ while(!feof($file))
 			$noteValues="(".$comicCount.", \"".$notes."\"), ";
 			$insertNotesSQL=$insertNotesSQL.$noteValues;
 		}
+		
+		$logString=$logString."ID=$comicCount, title=$title, issueNum=$num, issueVol=$vol. ";
 		
 		$sql=$sql.$values;
 		$comicCount++;
@@ -101,6 +105,7 @@ $insertNotesSQL=substr($insertNotesSQL,0,-2);//Cuts off the final unnecessary co
 //echo $sql;
 //echo $insertNotesSQL;
 mysqli_query($cxn,$sql)or die("Could not insert comics.<br>SQL ERROR: ".mysqli_error($cxn)."<br>".$sql);
+logEvent($cxn, $logString);
 
 if($notesPresent==1)
 	mysqli_query($cxn,$insertNotesSQL)or die("Could not insert into notes.<br>SQL ERROR: ".mysqli_error($cxn)."<br>".$insertNotesSQL);

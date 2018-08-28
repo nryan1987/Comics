@@ -1,7 +1,7 @@
 <?php
 $ID=$_GET['id'];
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
+$cxn=mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 $selectComic="SELECT * FROM Creators WHERE CreatorID='$ID'";
 $result=mysqli_query($cxn,$selectComic);
 $row=mysqli_fetch_assoc($result);

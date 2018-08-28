@@ -1,12 +1,16 @@
 <?php
+include 'utilities.php';
 session_start();
-$cxn=@mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
+$cxn=@mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 $CID=$_GET['id'];
 
 $findComicSQL="SELECT * FROM Comics WHERE ComicID='$CID'";
 $result=mysqli_query($cxn,$findComicSQL)or die("Could not search Comics.");
 $row=mysqli_fetch_assoc($result);
 extract($row);
+
+$mnth = getMonth($publicationDate);
+$yr = getYear($publicationDate);
 ?>
 <html>
 <head><title><?php echo $Title." Volume ".$Volume." "." #".$Issue ?></title><link rel="shortcut icon" href=""></head>
@@ -31,7 +35,7 @@ extract($row);
 <td><?php echo "$Volume" ?></td>
 </tr>
 <td>Date:</td>
-<td><?php echo "$Month, $Year" ?></td>
+<td><?php echo "$mnth, $yr" ?></td>
 </tr>
 <td>Story Title:</td>
 <td><?php echo "$StoryTitle" ?></td>

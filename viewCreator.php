@@ -1,7 +1,7 @@
 <?php
 include 'utilities.php';
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or die ("Could not connect");
+$cxn=mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 $creatorSearch=$_GET['id'];
 $role=$_GET['role'];
 $creatorPicSQL="SELECT * FROM Creators WHERE CreatorID='$creatorSearch'";
@@ -14,12 +14,12 @@ echo "<html>
 <body bgcolor=\"#408080\" text=\"#FFFFFF\">
 </body></html>";
 
-$artistSql="SELECT Creators.CreatorID, Creators.Creator, Comics.ComicID, Comics.Title, Comics.Issue, Comics.Volume, Comics.Month, Comics.Year,
+$artistSql="SELECT Creators.CreatorID, Creators.Creator, Comics.ComicID, Comics.Title, Comics.Issue, Comics.Volume, Comics.publicationDate,
 Comics.PricePaid, Comics.Value, Comics.StoryTitle, Comics.Publisher, Comics.Condition, Comics.Picture
 FROM Comics INNER JOIN (Creators INNER JOIN ComicArtists ON Creators.CreatorID = ComicArtists.ArtistID) ON Comics.ComicID = ComicArtists.ComicID
 WHERE (((Creators.CreatorID)='$creatorSearch')) ORDER BY Comics.Title,Comics.Volume, Comics.Issue";
 
-$writerSql="SELECT Creators.CreatorID, Creators.Creator, Creators.creatorPic, Comics.ComicID, Comics.Title, Comics.Issue, Comics.Volume, Comics.Month, Comics.Year,
+$writerSql="SELECT Creators.CreatorID, Creators.Creator, Creators.creatorPic, Comics.ComicID, Comics.Title, Comics.Issue, Comics.Volume, Comics.publicationDate,
 Comics.PricePaid, Comics.Value, Comics.StoryTitle, Comics.Publisher, Comics.Condition, Comics.Picture
 FROM Comics INNER JOIN (Creators INNER JOIN ComicWriters ON Creators.CreatorID = ComicWriters.WriterID) ON Comics.ComicID = ComicWriters.ComicID
 WHERE (((Creators.CreatorID)='$creatorSearch')) ORDER BY Comics.Title,Comics.Volume, Comics.Issue";

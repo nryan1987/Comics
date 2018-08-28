@@ -1,6 +1,6 @@
 <?php
 session_start();
-$cxn=@mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
+$cxn=@mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 $deleteSearch="TRUNCATE TABLE searchQuery";
 mysqli_query($cxn,$deleteSearch) or die ("Could not delete searches. $deleteSearch");
 $sql="SELECT DISTINCT Title FROM Comics ORDER BY Title";
@@ -42,27 +42,7 @@ $result=mysqli_query($cxn,$sql);
 <td><input type="number" size='5' name="volume"/></td>
 </tr>
 <td>Date:</td>
-<td><select name ='Month'>
-<option value=''></option>
-<option value='January'>January</option>
-<option value='February'>February</option>
-<option value='March'>March</option>
-<option value='April'>April</option>
-<option value='May'>May</option>
-<option value='June'>June</option>
-<option value='July'>July</option>
-<option value='August'>August</option>
-<option value='September'>September</option>
-<option value='October'>October</option>
-<option value='November'>November</option>
-<option value='December'>December</option>
-<option value='Spring'>Spring</option>
-<option value='Summer'>Summer</option>
-<option value='Fall'>Fall</option>
-<option value='Winter'>Winter</option>
-<option value='Annual'>Annual</option>
-<option value='Original Graphic Novel'>Original Graphic Novel</option>
-</select>
+<td>
 <select name ='yearOperator'>
 <option value='='>=</option>
 <option value='<'><</option>
@@ -70,6 +50,31 @@ $result=mysqli_query($cxn,$sql);
 <option value='>'>></option>
 <option value='>='>>=</option>
 <option value='!='>NOT</option>
+</select>
+<select name ='Month'>
+<option value=''></option>
+
+
+
+
+<option value='-01-01'>January</option>
+<option value='-02-01'>February</option>
+<option value='-03-01'>March</option>
+<option value='-04-01'>April</option>
+<option value='-05-01'>May</option>
+<option value='-06-01'>June</option>
+<option value='-07-01'>July</option>
+<option value='-08-01'>August</option>
+<option value='-09-01'>September</option>
+<option value='-10-01'>October</option>
+<option value='-11-01'>November</option>
+<option value='-12-01'>December</option>
+<option value='-03-20'>Spring</option>
+<option value='-06-21'>Summer</option>
+<option value='-09-22'>Fall</option>
+<option value='-12-23'>Winter</option>
+<option value='-12-30'>Annual</option>
+<option value='-01-31'>Original Graphic Novel</option>
 </select>
 <input type="number" size='5' name="year"/></td>
 </tr>
@@ -109,6 +114,12 @@ $result=mysqli_query($cxn,$sql);
 		echo "<option value='$Condition'>$Condition</option>\n";
 	}
 ?>
+</select></td>
+</tr>
+<td>Picture:</td>
+<td><select name ='Picture'>
+<option value=''></option>
+<option value='isNull'>is null</option>
 </select></td>
 <td>Notes (optional):</td>
 <td><input type="text" size='30' name="notes" /></td>
