@@ -34,7 +34,7 @@
 				<td>Issue:</td>
 				<td>$Issue</td></tr>
 				<td>Date:</td>
-				<td>$Month, $Year</td></tr>
+				<td>".getMonth($publicationDate).", ".getYear($publicationDate)."</td></tr>
 				<td>Story Title:</td>
 				<td>$StoryTitle</td></tr>
 				<td>Publisher:</td>
@@ -133,5 +133,156 @@
 		$publisherCount=$publisherCount+1;
 		$insertPublisher="INSERT INTO Publisher (PublisherID, Publisher) VALUES ('$publisherCount', '$publisher')";
 		mysqli_query($cxn,$insertPublisher)or die("Could not insert into publisher");
+	}
+	
+	function echoPage($pageTitle)
+	{
+		echo "<html>
+			<head><title>COMICS</title></head>
+
+			<body bgcolor=\"#408080\" text=\"#FFFFFF\">
+			<h1>".$pageTitle."</h1><br>
+			<a href='menu.php'>Back to main menu</a> <br>
+			<a href='search.php'>Back to search</a> <br>
+			</body></html>";
+	}
+	
+	function convertToDate($month, $year)
+	{
+		if(strcmp($month, "13")==0) //Spring
+			$pubDate=DateTime::createFromFormat("Y-m-d", $year."-3-20");
+		else if(strcmp($month, "14")==0) //Summer
+			$pubDate=DateTime::createFromFormat("Y-m-d", $year."-6-21");
+		else if(strcmp($month, "15")==0) //Fall
+			$pubDate=DateTime::createFromFormat("Y-m-d", $year."-9-22");
+		else if(strcmp($month, "16")==0) //Winter
+			$pubDate=DateTime::createFromFormat("Y-m-d", $year."-12-23");
+		else if(strcmp($month, "17")==0) //Annual
+			$pubDate=DateTime::createFromFormat("Y-m-d", $year."-12-30");
+		else if(strcmp($month, "18")==0) //OGN
+			$pubDate=DateTime::createFromFormat("Y-m-d", $year."-1-31");
+		else
+			$pubDate=DateTime::createFromFormat("Y-m-d", $year."-".$month."-1");
+		
+		return $pubDate;
+	}
+	
+	function getMonth($pubDate)
+	{
+		$date = DateTime::createFromFormat('Y-m-d', $pubDate);
+		//echo $date->format('Y-m-d');
+		//echo $date->format('m');
+		$month=$date->format('m');
+		$day=$date->format('d');
+		
+		if(strcmp($day, "01")==0)
+		{
+			if(strcmp($month, "01")==0)
+				return "January";
+			else if(strcmp($month, "02")==0)
+				return "February";
+			else if(strcmp($month, "03")==0)
+				return "March";
+			else if(strcmp($month, "04")==0)
+				return "April";
+			else if(strcmp($month, "05")==0)
+				return "May";
+			else if(strcmp($month, "06")==0)
+				return "June";
+			else if(strcmp($month, "07")==0)
+				return "July";
+			else if(strcmp($month, "08")==0)
+				return "August";
+			else if(strcmp($month, "09")==0)
+				return "September";
+			else if(strcmp($month, "10")==0)
+				return "October";
+			else if(strcmp($month, "11")==0)
+				return "November";
+			else
+				return "December";
+		}
+		else
+		{
+			if(strcmp($day, "20")==0) //Spring
+				return "Spring";
+			else if(strcmp($day, "21")==0) //Summer
+				return "Summer";
+			else if(strcmp($day, "22")==0) //Fall
+				return "Fall";
+			else if(strcmp($day, "23")==0) //Winter
+				return "Winter";
+			else if(strcmp($day, "30")==0) //Annual
+				return "Annual";
+			else if(strcmp($day, "31")==0) //OGN
+				return "Original Graphic Novel";
+			else
+			{
+				echo "I don't know what you did, but you screwed something up!!!<br>";
+				echo "PubDate: $pubDate<br>";
+				echo "Month: $month<br>";
+				echo "Day: $day<br>";
+			}
+		}
+	}
+	
+	function getYear($pubDate)
+	{
+		$date = DateTime::createFromFormat('Y-m-d', $pubDate);
+		//echo $date->format('Y-m-d');
+		//echo $date->format('m');
+		
+		return $date->format('Y');
+	}
+	
+	function getMonthNum($monthStr)
+	{
+		if(strcmp($monthStr, "January")==0)
+				return "-01-01";
+			else if(strcmp($monthStr, "February")==0)
+				return "-02-01";
+			else if(strcmp($monthStr, "March")==0)
+				return "-03-01";
+			else if(strcmp($monthStr, "April")==0)
+				return "-04-01";
+			else if(strcmp($monthStr, "May")==0)
+				return "-05-01";
+			else if(strcmp($monthStr, "June")==0)
+				return "-06-01";
+			else if(strcmp($monthStr, "July")==0)
+				return "-07-01";
+			else if(strcmp($monthStr, "August")==0)
+				return "-08-01";
+			else if(strcmp($monthStr, "September")==0)
+				return "-09-01";
+			else if(strcmp($monthStr, "October")==0)
+				return "-10-01";
+			else if(strcmp($monthStr, "November")==0)
+				return "-11-01";
+			else if(strcmp($monthStr, "December")==0)
+				return "-12-01";
+			else if(strcmp($monthStr, "Spring")==0)
+				return "-03-20";
+			else if(strcmp($monthStr, "Summer")==0)
+				return "-06-21";
+			else if(strcmp($monthStr, "Fall")==0)
+				return "-09-22";
+			else if(strcmp($monthStr, "Winter")==0)
+				return "-12-23";
+			else if(strcmp($monthStr, "Annual")==0)
+				return "-12-30";
+			else if(strcmp($monthStr, "Original Graphic Novel")==0)
+				return "-01-31";
+	}
+	
+	function logEvent($cxn, $event)
+	{
+		if($cxn == null)
+			return;
+		
+		$uname = $_SESSION['uname'];
+		$insertLog="INSERT INTO UserLog (UserName, Event, TimeStamp) VALUES (\"$uname\", \"$event\", CURRENT_TIMESTAMP)";
+		
+		mysqli_query($cxn,$insertLog)or die("Could not insert into log. "." $insertLog ".mysqli_error($cxn)." ".mysqli_error());
 	}
 ?>
