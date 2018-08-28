@@ -1,7 +1,7 @@
 <?php
 	require("fpdf17/fpdf.php");
 	session_start();
-	$cxn=@mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or header("Location: index.php?login=false");
+	$cxn=@mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 	$sql="SELECT * FROM Comics ORDER BY Title, Volume, Issue, Notes LIMIT 0, 500";
 	$result=mysqli_query($cxn,$sql);
 

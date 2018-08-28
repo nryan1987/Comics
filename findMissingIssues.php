@@ -1,7 +1,7 @@
 <?php
 include 'utilities.php';
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
+$cxn=mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 $sql="SELECT DISTINCT Title FROM Comics ORDER BY Title";
 $result=mysqli_query($cxn,$sql);
 ?>
@@ -25,6 +25,6 @@ Title:
 <br>Volume:
 <input type="number" size='5' name="Volume"/><br>
 <input type='submit' value='Search' /><br>
-<a href='http://ryan-brannan.com/menu.php'>Back to main menu</a> <br>
-<a href='http://ryan-brannan.com/logout.php'>Logout</a> <br>
+<a href='menu.php'>Back to main menu</a> <br>
+<a href='logout.php'>Logout</a> <br>
 </body></html>

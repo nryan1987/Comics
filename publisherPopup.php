@@ -1,6 +1,6 @@
 <?php
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"Comics") or die ("Could not connect");
+$cxn=mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or die ("Could not connect");
 ?>
 <html>
 <head>

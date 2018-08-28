@@ -1,7 +1,7 @@
 <?php
 include 'addList.php';
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or die ("Could not connect");
+$cxn=mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or die ("Could not connect");
 ?>
 <script>
 	var JSDATA = <?=json_encode($title, JSON_HEX_TAG | JSON_HEX_AMP)?>;
@@ -30,7 +30,7 @@ if ($_FILES["file"]["error"] > 0)
 if(!strrpos($_FILES["file"]["name"],".txt"))
 {
 	echo "Please upload a \".txt\" tab delimited file.<br>";
-	echo "<a href=\"http://ryan-brannan.com/uploadFile.php\">Back</a> <br>";
+	echo "<a href=\"uploadFile.php\">Back</a> <br>";
 }
 else
 {

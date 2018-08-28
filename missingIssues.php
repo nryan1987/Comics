@@ -1,10 +1,13 @@
 <?php
+include 'utilities.php';
 session_start();
-$cxn=mysqli_connect("localhost",$_SESSION['uname'],$_SESSION['pswrd'],"ryanbran_Comics") or header("Location: index.php?login=false");
+$cxn=mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 $Title=$_POST['Title'];
 $Volume=$_POST['Volume'];
 if(empty($Volume))
 	$Volume=1;
+logEvent($cxn, "Find missing issues. $Title volume $Volume.");
+
 $maxSql="SELECT MAX(Issue) as max FROM Comics WHERE Title=\"$Title\" and Volume=$Volume";
 $result=mysqli_query($cxn,$maxSql);
 $row=mysqli_fetch_assoc($result);
@@ -56,8 +59,11 @@ mysqli_query($cxn,$deleteSearch) or die ("Could not delete searches. $deleteSear
 	echo "</tr></table>";
 
 echo "<table style='width:100%'>" ;
-echo "<td><a href='http://ryan-brannan.com/findMissingIssues.php'>Find more missing issues</a></td></tr>";
-echo "<td><a href='http://ryan-brannan.com/menu.php'>Back to main menu</a></td></tr>";
-echo "<td><a href='http://ryan-brannan.com/logout.php'>Logout</a></td></tr>";
+echo "<td><a href='findMissingIssues.php'>Find more missing issues</a></td></tr>";
+echo "<td><a href='menu.php'>Back to main menu</a></td></tr>";
+echo "<td><a href='logout.php'>Logout</a></td></tr>";
 echo "</table>\n";
+
+$deleteSearch="TRUNCATE TABLE missingIssues";
+mysqli_query($cxn,$deleteSearch) or die ("Could not delete searches. $deleteSearch");
 ?>
