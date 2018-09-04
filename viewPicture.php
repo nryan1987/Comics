@@ -67,6 +67,10 @@ $yr = getYear($publicationDate);
 	}
 ?>
 
+<td>Comic entered on:</td>
+<td><?php echo "$RecordCreationDate" ?></td>
+</tr>
+
 <tr>
 <td colspan="2"><a href=update.php?id=<?php echo "$CID" ?>>Update <?php echo "$Title #$Issue" ?></td>
 </tr>

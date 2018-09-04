@@ -134,6 +134,12 @@ while($row=mysqli_fetch_assoc($result))
 		echo "$url";
 	} else {echo "$Picture";}
 ?>" /></td>
+
+</tr>
+<td>Comic entered on:</td>
+<td><?php echo "$RecordCreationDate" ?></td>
+</tr>
+
 </table> 
 <br>
 <input type="hidden" size="30" name="oldPicture" value="<?php echo "$Picture";?>" />
