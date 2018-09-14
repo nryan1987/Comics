@@ -10,7 +10,14 @@ $cxn=@mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESS
 <h1>User Log</h1><br>
 
 <?php
-	echo "Current date/time: ".date("Y-m-d G:i:s ")."<br>";
+	//Get the current time stamp from the db. This time stamp could be different from the system time stamp.
+	//The db time stamp is displayed to more easily compare with log entries.
+	$timeStampSQL = "SELECT CURRENT_TIMESTAMP";
+	$ts=mysqli_query($cxn,$timeStampSQL)or die("Could not execute time stamp search. ".mysqli_error($cxn));
+	$tsRow=mysqli_fetch_assoc($ts);
+	extract($tsRow);
+
+	echo "Current date/time: ".$CURRENT_TIMESTAMP."<br>";
 	$userLogSQL="SELECT * FROM UserLog ORDER BY TimeStamp DESC";
 		
 	$userLogResults=mysqli_query($cxn,$userLogSQL)or die("Could not execute user log search. ".mysqli_error($cxn));
