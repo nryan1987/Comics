@@ -1,6 +1,7 @@
 <?php
 include 'utilities.php';
 session_start();
+
 $cxn=@mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 $page=$_GET['page'];
 if(empty($page))
@@ -22,7 +23,6 @@ echo "<h1>All Issues</h1><br>";
 echo "<a href='menu.php'>Back to main menu</a> <br>";
 echo "<a href='logout.php'>Logout</a> <br><br>";
 echo "<a href='ExportList.php'>Download List</a> <br>";
-echo "<a href='ExportPDF.php'>Download PDF</a> <br>";
 echo "<table style=\"color:white\">";
 echo "<td>Total Comics: $CountOfComics</td></tr>";
 echo "<td>Total Price Paid: $$SumOfPricePaid</td></tr>";
