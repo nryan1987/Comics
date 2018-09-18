@@ -11,6 +11,8 @@ extract($row);
 
 $mnth = getMonth($publicationDate);
 $yr = getYear($publicationDate);
+
+logEvent($cxn, "Viewing issue. ID=$CID, title=$Title, issueNum=$Issue, issueVol=$Volume.");
 ?>
 <html>
 <head><title><?php echo $Title." Volume ".$Volume." "." #".$Issue ?></title><link rel="shortcut icon" href=""></head>

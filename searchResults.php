@@ -199,6 +199,7 @@ else if($nq == 1)
 		$whereClause=" 1";
 	}
 	
+	logEvent($cxn, "Search: ".htmlspecialchars($whereClause));
 	$sql=$sql.$whereClause." ORDER BY Title, Volume, Issue, Notes";
 
 	$result=mysqli_query($cxn,$sql)or die("Could not execute Search: $sql");
