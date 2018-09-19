@@ -37,3 +37,4 @@ if(!(empty($login)))
 </form>
 </tr>
 </table>
+<span style="position: absolute; bottom: 0pt;"><a href="https://github.com/nryan1987/Comics">Visit this project on Git Hub.</a></span>
