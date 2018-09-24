@@ -3,7 +3,7 @@ session_cache_limiter('private_no_expire');
 session_start();
 ini_set('session.cache_limiter', 'private');
 $cxn=mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or die ("Could not connect");
-$characterSearch=$_POST['searchWriters'];
+$characterSearch=$_POST['searchCharacters'];
 $sql="SELECT CharacterID, Characters FROM Characters WHERE CharacterID IN(
 SELECT CharacterID FROM Characters WHERE Characters LIKE \"%$characterSearch%\"
 
