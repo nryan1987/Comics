@@ -18,7 +18,6 @@ $comicCount=$comicCount+1;
 $totalAdded=0;
 $notesPresent=0;
 
-//$sql="INSERT INTO Comics (`ComicID`, `Title`, `Volume`, `Issue`, `Month`, `Year`, `StoryTitle`, `Publisher`, `PricePaid`, `Value`, `Condition`, `Picture`) VALUES ";
 $sql="INSERT INTO Comics (`ComicID`, `Title`, `Volume`, `Issue`, `publicationDate`, `StoryTitle`, `Publisher`, `PricePaid`, `Value`, `Condition`, `Picture`) VALUES ";
 $insertNotesSQL = "INSERT INTO Notes (ComicID, Notes) VALUES ";
 $logString = "Enter list. ";
@@ -41,13 +40,10 @@ while(!feof($file))
 		{
 			$publisherSQL="SELECT DISTINCT Publisher FROM `Comics` WHERE Title =\"$title\"";
 			$publisherResult=mysqli_query($cxn,$publisherSQL);
-		
+					
 			if($publisherResult->num_rows==0)
-			{			
-				/*$cleanTitle = cleanString($title);
-				$Publisher = $_COOKIE[$cleanTitle];
-				unset($_COOKIE[$cleanTitle]);*/
-				$publisher="12 Guage Comics"; //Default
+			{
+				$pub="12 Gauge Comics"; //Default
 			}
 			else	
 			{
