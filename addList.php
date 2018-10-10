@@ -29,7 +29,7 @@ while(!feof($file))
 	list($title,$vol,$num,$notes,$pub,$paid) = explode("\t", $line);
 	
 	$title = trim($title);
-	$title=str_replace('&quot;','',$title)
+	$title=str_replace('&quot;','',$title);
 	$paid=str_replace("$","",$paid);
 	$paid=str_replace("-","0.00",$paid);
 	if(empty($vol))
