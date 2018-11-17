@@ -27,8 +27,8 @@
 			echo "<table style='float: left'>" ;
 	
 			echo "<tr>\n
-				<td>Title:</td>
-				<td>$Title</td></tr>
+				<td>Title:</td>				
+				<td><a href='searchResults.php?searchTitle=".urlencode(str_replace("'","%",$Title))."' target='_blank' >$Title</a></td></tr>
 				<td>Volume:</td>
 				<td>$Volume</td></tr>
 				<td>Issue:</td>
