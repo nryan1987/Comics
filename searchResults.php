@@ -27,8 +27,6 @@ if(!(empty($_GET['searchTitle'])))// Title search from hyper link.
 {
 	$title=$_GET['searchTitle'];
 	$nq = 1;
-	
-	echo $title;
 }
 $sql="SELECT *, (SELECT GROUP_CONCAT(Notes SEPARATOR '; ') FROM Notes WHERE Notes.ComicID=Comics.ComicID ORDER BY Notes.Notes) AS Notes FROM Comics WHERE";
 $count=0;
