@@ -32,11 +32,23 @@ while(!feof($file))
 	$title=str_replace('&quot;','',$title);
 	$paid=str_replace("$","",$paid);
 	$paid=str_replace("-","0.00",$paid);
-	if(empty($vol))
-		$vol=1;
 	
 	if(!empty($title))
 	{
+		if($vol=="+") //Increment volume
+		{
+			$vol=getCurrentVolume($cxn,$title) + 1;
+		}
+		else if($vol=="-") //Decrement volume
+		{
+			$vol=getCurrentVolume($cxn,$title) - 1;
+		}
+		else if(empty($vol)) //Current volume
+			$vol=getCurrentVolume($cxn,$title);
+			
+		if($vol <= 0) //The volume needs to be above 0.
+			$vol=1;
+
 		if(empty($pub))
 		{
 			$publisherSQL="SELECT DISTINCT Publisher FROM `Comics` WHERE Title =\"$title\"";

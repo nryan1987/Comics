@@ -134,6 +134,16 @@
 		$insertPublisher="INSERT INTO Publisher (PublisherID, Publisher) VALUES ('$publisherCount', '$publisher')";
 		mysqli_query($cxn,$insertPublisher)or die("Could not insert into publisher");
 	}
+		
+	function getCurrentVolume($cxn,$title)
+	{
+		$currentVolume="SELECT COALESCE((SELECT MAX(Volume) from Comics where Title=\"$title\"),1) as currentVolume";
+		$result=mysqli_query($cxn,$currentVolume)or die("Could not get current volume");
+		$row=mysqli_fetch_assoc($result);
+		extract($row);
+		
+		return $currentVolume;
+	}
 	
 	function echoPage($pageTitle)
 	{
