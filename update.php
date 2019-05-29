@@ -3,8 +3,9 @@ include 'utilities.php';
 session_start();
 $cxn=mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 $CID=$_GET['id'];
-$selectComic="SELECT * FROM Comics WHERE ComicID='$CID'";
-$result=mysqli_query($cxn,$selectComic);
+$selectComic="SELECT Comics.*, ComicAlias.Title as altTitle, ComicAlias.Volume as altVolume, ComicAlias.Issue as altIssue 
+FROM Comics left join ComicAlias on Comics.ComicID=ComicAlias.ComicID WHERE Comics.ComicID='$CID'";
+$result=mysqli_query($cxn,$selectComic) or die ("Cannot search for comic with ID=$CID.<br>SQL ERROR: ".mysqli_error($cxn)."<br>".$selectComic);
 $row=mysqli_fetch_assoc($result);
 
 $allCreators="SELECT CreatorID, Creator FROM Creators
@@ -126,6 +127,18 @@ while($row=mysqli_fetch_assoc($result))
 		$count++;
 	}
 ?>
+<tr>
+<td>Alternate Title:</td>
+<td><input type="text" size="40" name="alternateTitle" value="<?php echo "$altTitle"; ?>" /></td>
+</tr>
+<tr>
+<td>Alternate Volume:</td>
+<td><input type="number" size="5" name="alternateVolume" value="<?php echo "$altVolume"; ?>" /></td>
+</tr>
+<tr>
+<td>Alternate Issue:</td>
+<td><input type="number" size="5" name="alternateIssue" value="<?php echo "$altIssue"; ?>" /></td>
+</tr>
 <td>Picture:</td>
 <td><input type="text" size="40" style=<?php if(empty($Picture)) echo "\"color:red\""; else echo "\"color:black\"";?> name="picture" value="<?php
 	$oldPic = $Picture;
