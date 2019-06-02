@@ -23,7 +23,7 @@ extract($row);
 	
 	//Add the aliases to the missing issues table.
 	$sql="SELECT DISTINCT Comics.Title as qryTitle, Comics.Issue, Comics.Volume as qryVolume, ComicAlias.Title as aliasTitle, ComicAlias.Issue as aliasIssue, ComicAlias.Volume as aliasVolume
-	from ComicAlias inner join Comics on Comics.Comics.ComicID=Comics.ComicAlias.ComicID
+	from ComicAlias inner join Comics on Comics.ComicID=Comics.ComicAlias.ComicID
 	where ComicAlias.Title=\"$Title\"";
 	$result=mysqli_query($cxn,$sql) or die("Could not add aliases to missing issues table.<br>SQL ERROR: ".mysqli_error($cxn)."<br>".$sql);
 	while($row=mysqli_fetch_assoc($result)) {
