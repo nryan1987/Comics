@@ -60,7 +60,7 @@ extract($row);
 			}
 			else if($altIssue == 1)
 			{
-				$offset=$Issue;
+				$offset=$Issue-1;
 			}
 			
 			$counter=1;
@@ -87,22 +87,21 @@ extract($row);
 		$values=substr($values,0,-2); //cut off the final unnecessary comma.
 		$sql=$sql.$values." on duplicate key UPDATE altTitle=VALUES(altTitle), altVolume=VALUES(altVolume), altIssue=VALUES(altIssue)";
 		$updateResult=mysqli_query($cxn,$sql);
-
 	}
 
 	$sql="SELECT missingIssues.Issue, missingIssues.altTitle, missingIssues.altVolume, missingIssues.altIssue
 		  FROM missingIssues
 		  LEFT JOIN 
 		  (
-			SELECT Comics.Title, Comics.Issue
+			SELECT Comics.Title, Comics.Issue, Comics.Volume
 			FROM Comics
 			WHERE Title=\"$Title\"
 			UNION
-			SELECT Title, Issue from ComicAlias
+			SELECT Title, Issue, Volume from ComicAlias
 			where ComicAlias.Title=\"$Title\"
 		  ) AS Comics
-		  ON (missingIssues.Issue = Comics.Issue and missingIssues.Title=Comics.Title)
-		  OR (missingIssues.altIssue = Comics.Issue and missingIssues.altTitle=Comics.Title)
+		  ON (missingIssues.Issue = Comics.Issue and Comics.Volume=$Volume and missingIssues.Title=Comics.Title)
+		  OR (missingIssues.altIssue = Comics.Issue and missingIssues.altVolume = Comics.Volume and missingIssues.altTitle=Comics.Title)
 		  WHERE Comics.Issue IS NULL ORDER BY Issue DESC";
 	$result=mysqli_query($cxn,$sql);
 	$numRows=mysqli_num_rows($result);
