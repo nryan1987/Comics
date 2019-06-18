@@ -8,7 +8,16 @@ if(empty($Volume))
 	$Volume=1;
 logEvent($cxn, "Find missing issues. $Title volume $Volume.");
 
-$maxSql="SELECT MAX(Issue) as max FROM Comics WHERE Title=\"$Title\" and Volume=$Volume";
+$maxSql="SELECT MAX(Issue) as max FROM 
+(
+			SELECT Issue
+			FROM Comics
+			WHERE Title=\"$Title\" and Volume=$Volume
+			UNION
+			SELECT Issue from ComicAlias
+			where Title=\"$Title\" and Volume=$Volume
+		  ) AS MaxIssue";
+		  
 $result=mysqli_query($cxn,$maxSql);
 $row=mysqli_fetch_assoc($result);
 extract($row);
