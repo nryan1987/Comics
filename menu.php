@@ -7,8 +7,8 @@ if(($_SESSION['uname']=='')||($_SESSION['uname']=='myusername'))
 {
 	$_SESSION['uname']=$_POST['myusername'];
 	$_SESSION['pswrd']=$_POST['mypassword'];
-	$_SESSION['dbName']=$_SERVER[HTTP_HOST]=="www.ryan-brannan.com" ? "ryanbran_Comics" : "Comics";
-	
+	$_SESSION['dbName']=strpos($_SERVER[HTTP_HOST], 'ryan-brannan.com') !== false ? "ryanbran_Comics" : "Comics";
+		
 	$cxn = @mysqli_connect("localhost",$_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 	
 	logEvent($cxn, "Successful Login");
