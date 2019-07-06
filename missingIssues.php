@@ -8,35 +8,109 @@ if(empty($Volume))
 	$Volume=1;
 logEvent($cxn, "Find missing issues. $Title volume $Volume.");
 
-$maxSql="SELECT MAX(Issue) as max FROM Comics WHERE Title=\"$Title\" and Volume=$Volume";
+$maxSql="SELECT MAX(Issue) as max FROM 
+(
+			SELECT Issue
+			FROM Comics
+			WHERE Title=\"$Title\" and Volume=$Volume
+			UNION
+			SELECT Issue from ComicAlias
+			where Title=\"$Title\" and Volume=$Volume
+		  ) AS MaxIssue";
+		  
 $result=mysqli_query($cxn,$maxSql);
 $row=mysqli_fetch_assoc($result);
 extract($row);
-$deleteSearch="TRUNCATE TABLE missingIssues";
-mysqli_query($cxn,$deleteSearch) or die ("Could not delete searches. $deleteSearch");
 ?>
 <html>
 <head><title>COMICS</title></head>
 <body bgcolor="#408080" text="#FFFFFF">
 <?php
-	$sql="INSERT INTO missingIssues (`Title`, `Issue`) VALUES ";
-	for($x=1; $x<=$max; $x++)
-	{
-		$values="(\"".$Title."\", ".$x."), ";
-		$sql=$sql.$values;
-	}
-	$sql=substr($sql,0,-2);//Cuts off the final unnecessary comma.
+	//Initial population of the missing issues table.
+	$sql="CALL populateMissingIssuesTable(\"$Title\", $max)";
 	$result=mysqli_query($cxn,$sql);
 	
-	$sql="SELECT missingIssues.Issue
+	//Add the aliases to the missing issues table.
+	$sql="SELECT DISTINCT Comics.Title as qryTitle, Comics.Issue, Comics.Volume as qryVolume, ComicAlias.Title as aliasTitle, ComicAlias.Issue as aliasIssue, ComicAlias.Volume as aliasVolume
+	from ComicAlias inner join Comics on Comics.ComicID=ComicAlias.ComicID
+	where ComicAlias.Title=\"$Title\"";
+	$result=mysqli_query($cxn,$sql) or die("Could not add aliases to missing issues table.<br>SQL ERROR: ".mysqli_error($cxn)."<br>".$sql);
+	while($row=mysqli_fetch_assoc($result)) {
+		extract($row);
+		$updateMissingIssues="UPDATE missingIssues SET altTitle=\"$qryTitle\", altIssue=\"$Issue\", altVolume=\"$qryVolume\"
+		WHERE Title=\"$aliasTitle\" AND Issue=\"$aliasIssue\"";
+		$updateResult=mysqli_query($cxn,$updateMissingIssues);
+		$success=mysqli_affected_rows($cxn);
+		
+		if($success < 1) {
+			$updateMissingIssues="UPDATE missingIssues SET altTitle=\"$aliasTitle\", altIssue=\"$aliasIssue\", altVolume=\"$aliasVolume\"
+			WHERE Title=\"$qryTitle\" AND Issue=\"$Issue\"";
+			$updateResult=mysqli_query($cxn,$updateMissingIssues);
+		}
+	}
+	
+	//Carry alt titles forward
+	$sql="SELECT Title, Issue, altTitle, altVolume, min(altIssue) as altIssue 
+	from missingIssues where altTitle is not NULL 
+	GROUP BY Title, Issue, altTitle, altVolume ORDER BY Issue ASC";
+	$result=mysqli_query($cxn,$sql);
+	while($row=mysqli_fetch_assoc($result)) {
+		extract($row);
+
+		$sql="INSERT INTO missingIssues (Title, Issue, altTitle, altVolume, altIssue) VALUES";
+		$values=" ";
+				
+		$offset=0;
+		if($Issue > $altIssue)
+		{
+			if($altIssue > 1)
+			{
+				$offset=$Issue - $altIssue;
+			}
+			else if($altIssue == 1)
+			{
+				$offset=$Issue-1;
+			}
+			
+			$counter=1;
+			for($i=$offset + 1; $i<=$max; $i++) {
+				$values=$values."(\"$Title\", $i, \"$altTitle\", $altVolume, ".$counter++."), ";
+			}
+		}
+		else if($Issue < $altIssue)
+		{
+			if($Issue > 1)
+			{
+				$offset=$altIssue - $Issue + 1;
+			}
+			if($Issue == 1)
+			{
+				$offset=$altIssue;
+			}
+			
+			for($i=1; $i<=$max; $i++) {
+				$values=$values."(\"$Title\", $i, \"$altTitle\", $altVolume, ".$offset++."), ";
+			}
+		}
+		
+		$values=substr($values,0,-2); //cut off the final unnecessary comma.
+		$sql=$sql.$values." on duplicate key UPDATE altTitle=VALUES(altTitle), altVolume=VALUES(altVolume), altIssue=VALUES(altIssue)";
+		$updateResult=mysqli_query($cxn,$sql);
+	}
+
+	$sql="SELECT missingIssues.Issue, missingIssues.altTitle, missingIssues.altVolume, missingIssues.altIssue
 		  FROM missingIssues
 		  LEFT JOIN 
 		  (
-		     SELECT Comics.Issue
-			 FROM Comics
-			 WHERE Title=\"$Title\" AND Volume=$Volume
+			SELECT Comics.Title, Comics.Issue, Comics.Volume
+			FROM Comics
+			WHERE Title=\"$Title\"
+			UNION
+			SELECT Title, Issue, Volume from ComicAlias
+			where ComicAlias.Title=\"$Title\"
 		  ) AS Comics
-		  ON missingIssues.Issue = Comics.Issue
+		  ON (missingIssues.Issue = Comics.Issue and Comics.Volume=$Volume and missingIssues.Title=Comics.Title)
+		  OR (missingIssues.altIssue = Comics.Issue and missingIssues.altVolume = Comics.Volume and missingIssues.altTitle=Comics.Title)
 		  WHERE Comics.Issue IS NULL ORDER BY Issue DESC";
 	$result=mysqli_query($cxn,$sql);
 	$numRows=mysqli_num_rows($result);
@@ -52,7 +126,8 @@ mysqli_query($cxn,$deleteSearch) or die ("Could not delete searches. $deleteSear
 	{
 		$count ++;
 		extract($row);
-		echo "<td>$Issue</td>";
+		$missingIssue=empty($altTitle) ? $Issue : $Issue." (".$altTitle." VOL.".$altVolume." #".$altIssue.")";
+		echo "<td>$missingIssue</td>";
 		if($count % 20 == 0)
 			echo "</tr><tr>";
 	}

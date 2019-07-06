@@ -7,8 +7,8 @@ if(($_SESSION['uname']=='')||($_SESSION['uname']=='myusername'))
 {
 	$_SESSION['uname']=$_POST['myusername'];
 	$_SESSION['pswrd']=$_POST['mypassword'];
-	$_SESSION['dbName']=$_SERVER[HTTP_HOST]=="www.ryan-brannan.com" ? "ryanbran_Comics" : "Comics";
-	
+	$_SESSION['dbName']=strpos($_SERVER[HTTP_HOST], 'ryan-brannan.com') !== false ? "ryanbran_Comics" : "Comics";
+		
 	$cxn = @mysqli_connect("localhost",$_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 	
 	logEvent($cxn, "Successful Login");
@@ -35,6 +35,7 @@ if(($_SESSION['uname']=='')||($_SESSION['uname']=='myusername'))
 <a href="publisher.php">See the most popular publishers</a> <br>
 <a href="newest100.php">See the Last 100 issues entered</a> <br>
 <a href="findMissingIssues.php">Find missing issues</a> <br>
+<a href="createLegacyNumbersInput.php">Create Legacy Numbers</a> <br>
 <a href="search.php">Search Comics</a> <br>
 <a href="searchCreators.php">Search Creators</a> <br>
 <a href="searchCharacters.php">Search Characters</a> <br>

@@ -45,9 +45,6 @@
 				<td>$$Value</td></tr>
 				<td>Grade:</td>
 				<td>$Condition</td></tr>";
-//				<td>Notes:</td>
-//				<td>$Notes</td></tr>
-//				</tr><br>";
 
 			$notesSQL="SELECT * FROM Notes WHERE ComicID=$ComicID";
 			$notesResults=mysqli_query($cxn,$notesSQL)or die("Could not execute Notes Search. ".mysqli_error($cxn));
@@ -58,6 +55,15 @@
 				echo "<td>Note #$count:</td>";
 				echo "<td>$Notes</td></tr>";
 				$count++;
+			}
+			
+			$aliasSQL="select CONCAT(Title, \" VOL. \", Volume, \" #\", Issue) as aliasStr from ComicAlias where ComicID=$ComicID";
+			$aliasResults=mysqli_query($cxn,$aliasSQL)or die("Could not execute alias search. ".mysqli_error($cxn));
+			while($aliasRow=mysqli_fetch_assoc($aliasResults))
+			{
+				extract($aliasRow);
+				echo "<td>Also known as: </td>";
+				echo "<td>$aliasStr</td></tr>";
 			}
 			
 			echo "</table>\n";

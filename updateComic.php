@@ -29,7 +29,9 @@ $charFields=$_GET['characterFields'];
 $altCharacter=trim($_GET['alternateCharacter']);
 $altAlias=trim($_GET['alternateAlias']);
 $editAliases=$_GET['editAlias'];
-$size=count($editAliasIDs);
+$altTitle=$_GET['alternateTitle'];
+$altVolume=$_GET['alternateVolume'];
+$altIssue=$_GET['alternateIssue'];
 
 for ($j=0;$j<count($noteIDs);$j++) 
 {
@@ -165,6 +167,14 @@ if($Notes != Null)
 	$insertNotesSQL = "INSERT INTO Notes (ComicID, Notes) VALUES ($CID, \"$Notes\")";
 	mysqli_query($cxn,$insertNotesSQL)or die("Could not insert into notes<br>SQL ERROR: ".mysqli_error($cxn)."<br>".$insertNotesSQL."\n".mysqli_error());
 	logEvent($cxn, "Create note. ID=$CID, title=$Title, issueNum=$Issue, issueVol=$Volume note=$Notes.");
+}
+
+if(!empty($altTitle) && !empty($altVolume) && !empty($altIssue))
+{
+	$comicAliasSQL="INSERT INTO ComicAlias (ComicID, Title, Issue, Volume) VALUES ($CID, \"$altTitle\", $altIssue, $altVolume)
+	on duplicate key UPDATE Title=VALUES(Title), Volume=VALUES(Volume), Issue=VALUES(Issue)";
+	mysqli_query($cxn,$comicAliasSQL)or die("Could not add comic alias.<br>SQL ERROR: ".mysqli_error($cxn)."<br>".$comicAliasSQL."\n".mysqli_error());
+	logEvent($cxn, "Create comic alias. ID=$CID, aliasTitle=$altTitle, aliasIssueNum=$altIssue, aliasIssueVol=$altVolume .");
 }
 
 
