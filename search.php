@@ -97,10 +97,28 @@ $result=mysqli_query($cxn,$sql);
 </select></td>
 </tr>
 <td>Price Paid:</td>
-<td>$<input type="number" size='5' name="pricePaid"/></td>
+<td>
+<select name ='pricePaidOperator'>
+<option value='='>=</option>
+<option value='<'><</option>
+<option value='<='><=</option>
+<option value='>'>></option>
+<option value='>='>>=</option>
+<option value='!='>NOT</option>
+</select>
+$<input type="number" size='5' name="pricePaid"/></td>
 </tr>
 <td>Value:</td>
-<td>$<input type="number" size='5' name="value"/></td>
+<td>
+<select name ='valueOperator'>
+<option value='='>=</option>
+<option value='<'><</option>
+<option value='<='><=</option>
+<option value='>'>></option>
+<option value='>='>>=</option>
+<option value='!='>NOT</option>
+</select>
+$<input type="number" size='5' name="value"/></td>
 </tr>
 <td>Condition:</td>
 <td><select name ='Condition'>
