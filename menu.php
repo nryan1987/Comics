@@ -3,12 +3,12 @@ include 'utilities.php';
 session_cache_limiter('private_no_expire');
 session_start();
 ini_set('session.cachelimiter', 'private');
-if(($_SESSION['uname']=='')||($_SESSION['uname']=='myusername'))
+if(($_SESSION['uname']=='')||($_SESSION['uname']==$_POST['myusername']))
 {
 	$_SESSION['uname']=$_POST['myusername'];
 	$_SESSION['pswrd']=$_POST['mypassword'];
 	$_SESSION['dbName']=strpos($_SERVER[HTTP_HOST], 'ryan-brannan.com') !== false ? "ryanbran_Comics" : "Comics";
-		
+	
 	$cxn = @mysqli_connect("localhost",$_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
 	
 	logEvent($cxn, "Successful Login");
