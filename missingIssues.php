@@ -8,7 +8,16 @@ if(empty($Volume))
 	$Volume=1;
 logEvent($cxn, "Find missing issues. $Title volume $Volume.");
 
-$maxSql="SELECT MAX(Issue) as max FROM Comics WHERE Title=\"$Title\" and Volume=$Volume";
+$maxSql="SELECT MAX(Issue) as max FROM 
+(
+			SELECT Issue
+			FROM Comics
+			WHERE Title=\"$Title\" and Volume=$Volume
+			UNION
+			SELECT Issue from ComicAlias
+			where Title=\"$Title\" and Volume=$Volume
+		  ) AS MaxIssue";
+		  
 $result=mysqli_query($cxn,$maxSql);
 $row=mysqli_fetch_assoc($result);
 extract($row);
@@ -24,7 +33,7 @@ extract($row);
 	//Add the aliases to the missing issues table.
 	$sql="SELECT DISTINCT Comics.Title as qryTitle, Comics.Issue, Comics.Volume as qryVolume, ComicAlias.Title as aliasTitle, ComicAlias.Issue as aliasIssue, ComicAlias.Volume as aliasVolume
 	from ComicAlias inner join Comics on Comics.ComicID=ComicAlias.ComicID
-	where ComicAlias.Title=\"$Title\"";
+	where ComicAlias.Title=\"$Title\" AND (Comics.Volume=$Volume or ComicAlias.Volume=$Volume)";
 	$result=mysqli_query($cxn,$sql) or die("Could not add aliases to missing issues table.<br>SQL ERROR: ".mysqli_error($cxn)."<br>".$sql);
 	while($row=mysqli_fetch_assoc($result)) {
 		extract($row);

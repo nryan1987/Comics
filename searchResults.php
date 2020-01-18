@@ -11,6 +11,8 @@ $issueNum=$_POST['issue'];
 $issueVol=$_POST['volume'];
 $month=$_POST['Month'];
 $yearOp=$_POST['yearOperator'];
+$pricePaidOp=$_POST['pricePaidOperator'];
+$valueOp=$_POST['valueOperator'];
 $year=$_POST['year'];
 $notes=$_POST['notes'];
 $story=$_POST['storyTitle'];
@@ -139,14 +141,14 @@ else if($nq == 1)
 	{
 		if($count>0)
 			$whereClause=$whereClause." AND ";
-		$whereClause=$whereClause." `PricePaid`=\"$paid\"";
+		$whereClause=$whereClause." `PricePaid` $pricePaidOp \"$paid\"";
 		$count++;
 	}
 	if(!(empty($value)))
 	{
 		if($count>0)
 			$whereClause=$whereClause." AND ";
-		$whereClause=$whereClause." `Value`=\"$value\"";
+		$whereClause=$whereClause." `Value` $valueOp \"$value\"";
 		$count++;
 	}
 	if(!(empty($grade)))
