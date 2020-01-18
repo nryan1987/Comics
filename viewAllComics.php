@@ -3,11 +3,11 @@ include 'utilities.php';
 session_start();
 
 $cxn=@mysqli_connect("localhost", $_SESSION['uname'], $_SESSION['pswrd'], $_SESSION['dbName']) or header("Location: index.php?login=false");
-$page=$_GET['page'];
-if(empty($page))
+$pageParameter=$_GET['page'];
+if(empty($pageParameter))
 	$sql="SELECT *, (SELECT GROUP_CONCAT(Notes SEPARATOR '; ') FROM Notes WHERE Notes.ComicID=Comics.ComicID ORDER BY Notes.Notes) AS Notes FROM `Comics` ORDER BY Title, Volume, Issue, Notes LIMIT 0, 500";
 else
-	$sql="SELECT *, (SELECT GROUP_CONCAT(Notes SEPARATOR '; ') FROM Notes WHERE Notes.ComicID=Comics.ComicID ORDER BY Notes.Notes) AS Notes FROM `Comics` ORDER BY Title, Volume, Issue, Notes LIMIT $page, 500";
+	$sql="SELECT *, (SELECT GROUP_CONCAT(Notes SEPARATOR '; ') FROM Notes WHERE Notes.ComicID=Comics.ComicID ORDER BY Notes.Notes) AS Notes FROM `Comics` ORDER BY Title, Volume, Issue, Notes LIMIT $pageParameter, 500";
 
 $result=mysqli_query($cxn,$sql);
 $totalsSQL="SELECT Count(Comics.ComicID) AS CountOfComics, Sum(Comics.PricePaid) AS SumOfPricePaid, Sum(Comics.Value) AS SumOfValue,
@@ -48,7 +48,10 @@ for($i = 0; $i < $numPages; $i++)
 {
 	$page = 500 * $i;
 	$pageNum = $i + 1;
-	echo("<a href='viewAllComics.php?page=$page'>$pageNum</a>");
+	if($pageParameter == $page)
+		echo("<a href='viewAllComics.php?page=$page'>*$pageNum*</a>");
+	else
+		echo("<a href='viewAllComics.php?page=$page'>$pageNum</a>");
 	if($i != ($numPages - 1))
 		echo ", ";
 }	
