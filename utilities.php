@@ -301,4 +301,15 @@
 		
 		mysqli_query($cxn,$insertLog)or die("Could not insert into log. "." $insertLog ".mysqli_error($cxn)." ".mysqli_error());
 	}
+	
+	function deleteOldEvents($cxn)
+	{
+		if($cxn == null)
+			return;
+			
+		//Delete logs more than 2 years old
+		$uname = $_SESSION['uname'];
+		$deleteLogs="delete from UserLog where date(`TimeStamp`) < DATE_SUB(NOW(), INTERVAL 2 YEAR) and UserName = \"$uname\"";
+		mysqli_query($cxn,$deleteLogs)or die("Could not delete old logs. "." $deleteLogs ".mysqli_error($cxn)." ".mysqli_error());
+	}
 ?>
