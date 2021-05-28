@@ -159,13 +159,12 @@ else if($nq == 1)
 		$count++;
 	}
 	if(!empty($pic))
-	{
+	{		
 		$picSQL="SELECT ComicID, Picture FROM Comics";
 		$picResult=mysqli_query($cxn,$picSQL)or die("Could not execute pic Search: $picSQL");
 		
-		$idCount = 0;
 		$idClause=" `ComicID` IN ( ";
-		$ids="";
+		$ids=array();
 		
 		while($row=mysqli_fetch_assoc($picResult))
 		{
@@ -173,8 +172,7 @@ else if($nq == 1)
 			
 			if(empty($Picture))
 			{
-				$ids = $ids." $ComicID, ";
-				$idCount++;
+				array_push($ids, $ComicID);
 			}
 			else
 			{
@@ -184,18 +182,17 @@ else if($nq == 1)
 				$fileExists = file_exists($fullURL);
 				if(!$fileExists)
 				{
-					$ids = $ids." $ComicID, ";
-					$idCount++;
+					array_push($ids, $ComicID);
 				}
 			}
 		}
-		
-		if($idCount > 0)
+				
+		if(count($ids) > 0)
 		{
-			$ids=substr($ids,0,-2);//Cuts off the final unnecessary comma.
+			$IDStr=implode(",", $ids);
 			if($count>0)
 				$whereClause=$whereClause." AND ";
-			$whereClause=$whereClause.$idClause.$ids.")";
+			$whereClause=$whereClause.$idClause.$IDStr.")";
 			
 			$count++;
 		}
