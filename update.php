@@ -44,7 +44,7 @@ $mnth=getMonth($publicationDate);
 </tr>
 <tr>
 <td>Issue:</td>
-<td><input type="number" size="5" name="issue" value="<?php echo "$Issue"; ?>" /></td>
+<td><input type="number" size="5" name="issue" step=".01" value="<?php echo "$Issue"; ?>" /></td>
 </tr>
 <tr>
 <td>Volume:</td>
