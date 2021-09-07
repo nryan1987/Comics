@@ -36,15 +36,15 @@ $mnth=getMonth($publicationDate);
 <table Border='1'>
 <tr>
 <td>ComicID: </td>
-<td><input type="number" size="5" name="comicID" value="<?php echo "$CID"; ?>" readonly/></td>
+<td><input type="number" name="comicID" value="<?php echo "$CID"; ?>" readonly/></td>
 </tr>
 <tr>
 <td>Title:</td>
-<td><input type="text" size="40" name="title" value="<?php echo "$Title"; ?>" /></td>
+<td><input type="text" size="40" name="title" step=".01" value="<?php echo "$Title"; ?>" /></td>
 </tr>
 <tr>
 <td>Issue:</td>
-<td><input type="number" size="5" name="issue" value="<?php echo "$Issue"; ?>" /></td>
+<td><input type="number" size="5" name="issue" step=".01" value="<?php echo "$Issue"; ?>" /></td>
 </tr>
 <tr>
 <td>Volume:</td>
@@ -93,10 +93,10 @@ while($row=mysqli_fetch_assoc($result))
 </select></td>
 </tr>
 <td>Price Paid:</td>
-<td><input type="number" size="5" name="paid" step=".01" value="<?php echo "$PricePaid"; ?>" /></td>
+<td><input type="number" name="paid" step=".01" value="<?php echo "$PricePaid"; ?>" /></td>
 </tr>
 <td>Value:</td>
-<td><input type="number" size="5" name="value" step=".01" value="<?php echo "$Value"; ?>" /></td>
+<td><input type="number" name="value" step=".01" value="<?php echo "$Value"; ?>" /></td>
 </tr>
 <td>Condition:</td>
 <td><select name ='condition'>
@@ -150,7 +150,11 @@ while($row=mysqli_fetch_assoc($result))
 
 </tr>
 <td>Comic entered on:</td>
-<td><?php echo "$RecordCreationDate" ?></td>
+<td><?php 
+	if(empty($RecordCreationDate))
+		echo "No date available";
+	else
+		echo $RecordCreationDate; ?></td>
 </tr>
 
 </table> 

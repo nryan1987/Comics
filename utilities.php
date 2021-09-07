@@ -1,6 +1,7 @@
 <?php
 	function getURL($title,$issueVol,$issueNum,$notes)
 	{
+		$issueNum = formatIssueNum($issueNum);
 		$imgTitle=str_replace(".","",$title);
 		$imgTitle=str_replace(":","",$imgTitle);
 		$imgTitle=str_replace("/"," ",$imgTitle);
@@ -24,6 +25,7 @@
 		while($row=mysqli_fetch_assoc($result))
 		{
 			extract($row);
+			$issueStr = formatIssueNum($Issue);
 			echo "<table style='float: left'>" ;
 	
 			echo "<tr>\n
@@ -32,7 +34,7 @@
 				<td>Volume:</td>
 				<td>$Volume</td></tr>
 				<td>Issue:</td>
-				<td>$Issue</td></tr>
+				<td>$issueStr</td></tr>
 				<td>Date:</td>
 				<td>".getMonth($publicationDate).", ".getYear($publicationDate)."</td></tr>
 				<td>Story Title:</td>
@@ -71,7 +73,7 @@
 			echo "<table style='display: inline'>" ;
 			echo "<td><a href='viewPicture.php?id=$ComicID'>
 				<img src='$Picture' ALT='Picture unavailable' BORDER='2' width='250' height='375'/></a></td></tr>";
-			echo "<td><a href=update.php?id=$ComicID>Update $Title #$Issue </a></td></tr>";
+			echo "<td><a href=update.php?id=$ComicID>Update $Title #$issueStr </a></td></tr>";
 			echo "</table>\n";
 		
 			$writerSQL="SELECT ComicWriters.ComicID, Creators.Creator
@@ -311,5 +313,18 @@
 		$uname = $_SESSION['uname'];
 		$deleteLogs="delete from UserLog where date(`TimeStamp`) < DATE_SUB(NOW(), INTERVAL 2 YEAR) and UserName = \"$uname\"";
 		mysqli_query($cxn,$deleteLogs)or die("Could not delete old logs. "." $deleteLogs ".mysqli_error($cxn)." ".mysqli_error());
+	}
+	
+	function formatIssueNum($Issue)
+	{
+		$issueExp = explode(".", $Issue);
+		//print_r($issueExp);
+		
+		if($issueExp[1] == 0){
+			return $issueExp[0];
+		}
+		else {
+			return $Issue;
+		}
 	}
 ?>
