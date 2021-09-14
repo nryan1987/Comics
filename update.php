@@ -28,9 +28,10 @@ extract($row);
 
 $mnthNum=getMonthNum(getMonth($publicationDate));
 $mnth=getMonth($publicationDate);
+$issueStr = formatIssueNum($Issue);
 ?>
 <html>
-<head><title><?php echo $Title." Volume ".$Volume." "." #".$Issue ?></title></head>
+<head><title><?php echo $Title." Volume ".$Volume." "." #".$issueStr ?></title></head>
 <body bgcolor="#408080" text="#FFFFFF">
 <form action='updateComic.php' method='GET'>
 <table Border='1'>

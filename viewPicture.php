@@ -11,11 +11,12 @@ extract($row);
 
 $mnth = getMonth($publicationDate);
 $yr = getYear($publicationDate);
+$issueStr = formatIssueNum($Issue);
 
-logEvent($cxn, "Viewing issue. ID=$CID, title=$Title, issueNum=$Issue, issueVol=$Volume.");
+logEvent($cxn, "Viewing issue. ID=$CID, title=$Title, issueNum=$issueStr, issueVol=$Volume.");
 ?>
 <html>
-<head><title><?php echo $Title." Volume ".$Volume." "." #".$Issue ?></title><link rel="shortcut icon" href=""></head>
+<head><title><?php echo $Title." Volume ".$Volume." "." #".$issueStr ?></title><link rel="shortcut icon" href=""></head>
 
 <body bgcolor="#408080" text="#FFFFFF">
 
@@ -30,7 +31,7 @@ logEvent($cxn, "Viewing issue. ID=$CID, title=$Title, issueNum=$Issue, issueVol=
 </tr>
 <tr>
 <td>Issue:</td>
-<td><?php echo "$Issue" ?></td>
+<td><?php echo "$issueStr" ?></td>
 </tr>
 <tr>
 <td>Volume:</td>
@@ -74,7 +75,7 @@ logEvent($cxn, "Viewing issue. ID=$CID, title=$Title, issueNum=$Issue, issueVol=
 </tr>
 
 <tr>
-<td colspan="2"><a href=update.php?id=<?php echo "$CID" ?>>Update <?php echo "$Title #$Issue" ?></td>
+<td colspan="2"><a href=update.php?id=<?php echo "$CID" ?>>Update <?php echo "$Title #$issueStr" ?></td>
 </tr>
 </table> 
 <?php echo '<img STYLE="position:absolute; TOP:7px; LEFT:525px;" src="'.$Picture.'" ALT="Picture unavailable">' ?>

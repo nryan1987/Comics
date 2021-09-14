@@ -62,12 +62,13 @@ while($row=mysqli_fetch_assoc($result))
 	//echo $publicationDate;
 	$mnth = getMonth($publicationDate);
 	$yr = getYear($publicationDate);
+	$issueStr = formatIssueNum($Issue);
 	
 	//echo $mnth.", ".$yr;
 	echo "<tr>\n
 		<td><a href='viewPicture.php?id=$ComicID'>$Title</td>
 		<td>$Volume</td>
-		<td>$Issue</td>
+		<td>$issueStr</td>
 		<td>$mnth, $yr</td>
 		<td>$Notes</td>
 		<td>$StoryTitle</td>
